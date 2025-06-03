@@ -55,6 +55,17 @@ function isActress(obj: any): obj is Actress {
   );
 }
 
+async function getActress(id: number): Promise<Actress | null> {
+  try {
+    const res = await fetch(`http://localhost:3333/actresses/${id}`);
+    if (!res.ok) return null;
+    const data = await res.json();
+    return isActress(data) ? data : null;
+  } catch (error) {
+    console.error("Errore nella richiesta:", error);
+    return null;
+  }
+}
 
 async function getAllActresses(): Promise<Actress[]> {
   try {
@@ -68,3 +79,20 @@ async function getAllActresses(): Promise<Actress[]> {
     return [];
   }
 }
+
+async function getActresses(ids: number[]): Promise<(Actress | null)[]> {
+  const promises = ids.map(id => getActress(id));
+  return Promise.all(promises);
+}
+
+getAllActresses().then(actresses => {
+  console.log("Tutte le attrici:", actresses);
+});
+
+getActress(1).then(actress => {
+  console.log("Attrice con ID 1:", actress);
+});
+
+getActresses([1, 2, 99]).then(results => {
+  console.log("Risultati da più ID:", results);
+});
