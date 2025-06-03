@@ -56,14 +56,15 @@ function isActress(obj: any): obj is Actress {
 }
 
 
-async function getActress(id: number): Promise<Actress | null> {
+async function getAllActresses(): Promise<Actress[]> {
   try {
-    const res = await fetch(`http://localhost:3333/actresses/${id}`);
-    if (!res.ok) return null;
+    const res = await fetch("http://localhost:3333/actresses");
+    if (!res.ok) return [];
     const data = await res.json();
-    return isActress(data) ? data : null;
+    
+    return Array.isArray(data) ? data.filter(isActress) : [];
   } catch (error) {
-    console.error("Errore nella richiesta:", error);
-    return null;
+    console.error("Errore durante il fetch:", error);
+    return [];
   }
 }
